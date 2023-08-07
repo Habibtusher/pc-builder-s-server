@@ -1,7 +1,7 @@
 import express from 'express';
 const app = express()
 const port = process.env.PORT || 5000
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { MongoClient, ObjectId, ServerApiVersion } from 'mongodb';
 import cors from 'cors';
 
 
@@ -59,6 +59,19 @@ async function run() {
             const randomObjects = getRandomObjects(result, 6);
 
             res.send({ message: "success", data: randomObjects, status: 200 })
+        })
+        app.get('/products/:category', async (req, res) => {
+            const category = req.params.category
+            let result = await newsCollection.find({ category }).toArray()
+
+
+            res.send({ message: "success", data: result, status: 200 })
+        })
+        app.get('/product/:id', async (req, res) => {
+            const id = req.params.id
+            let result = await newsCollection.findOne({ _id: new ObjectId(id) })
+            console.log("🚀 ~ file: index.js:73 ~ app.get ~ result:", result,id)
+            res.send({ message: "success", data: result, status: 200 })
         })
     } finally {
         // Ensures that the client will close when you finish/error
