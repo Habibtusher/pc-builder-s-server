@@ -15,11 +15,11 @@ const uri = "mongodb+srv://news:news@cluster0.avdod.mongodb.net/?retryWrites=tru
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
+    // serverApi: {
+    //     version: ServerApiVersion.v1,
+    //     strict: true,
+    //     deprecationErrors: true,
+    // }
 });
 
 async function run() {
@@ -70,8 +70,17 @@ async function run() {
         app.get('/product/:id', async (req, res) => {
             const id = req.params.id
             let result = await newsCollection.findOne({ _id: new ObjectId(id) })
-            console.log("🚀 ~ file: index.js:73 ~ app.get ~ result:", result, id)
             res.send({ message: "success", data: result, status: 200 })
+        })
+        app.get('/categories', async (req, res) => {
+            const categories = await newsCollection.distinct('category');
+            const uniqueCategoriesWithRandomProduct = await Promise.all(
+                categories.map(async (category) => {
+                    const randomProduct = await newsCollection.findOne({ category });
+                    return { category, randomProduct };
+                })
+            );
+            res.send({ message: 'success', data: uniqueCategoriesWithRandomProduct, status: 200 });
         })
     } finally {
         // Ensures that the client will close when you finish/error
