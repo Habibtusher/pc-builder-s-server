@@ -29,7 +29,7 @@ async function run() {
         const newsCollection = client.db("pc-builder").collection("products")
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-        app.get('/products', async (req, res) => {
+        app.get('/all-products', async (req, res) => {
             let result = await newsCollection.find({}).toArray()
             function getRandomInt(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -70,7 +70,7 @@ async function run() {
         app.get('/product/:id', async (req, res) => {
             const id = req.params.id
             let result = await newsCollection.findOne({ _id: new ObjectId(id) })
-            console.log("🚀 ~ file: index.js:73 ~ app.get ~ result:", result,id)
+            console.log("🚀 ~ file: index.js:73 ~ app.get ~ result:", result, id)
             res.send({ message: "success", data: result, status: 200 })
         })
     } finally {
